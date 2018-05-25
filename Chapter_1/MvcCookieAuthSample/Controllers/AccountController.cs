@@ -107,6 +107,14 @@ namespace mvcCookieAuthSample.Controllers
                 {
                     if (_userses.ValidateCredentials(loginViewModel.UserName, loginViewModel.Password))
                     {
+                        var props = new AuthenticationProperties
+                        {
+                            IsPersistent = true,
+                            ExpiresUtc = DateTimeOffset.Now.Add(TimeSpan.FromMinutes(30))
+                        };
+
+                        await Microsoft.AspNetCore.Http.AuthenticationManagerExtensions.SignInAsync(HttpContext,
+                            user.SubjectId, user.Username, props);
                         return RedirectToLoacl(returnUrl);
                     }
                     ModelState.AddModelError(nameof(loginViewModel.Password), "Wrong Password");

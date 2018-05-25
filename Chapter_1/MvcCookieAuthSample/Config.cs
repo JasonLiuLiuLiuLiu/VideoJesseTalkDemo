@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using IdentityServer4;
 using IdentityServer4.Models;
 using IdentityServer4.Test;
 
@@ -29,7 +30,14 @@ namespace mvcCookieAuthSample
                     {
                         new Secret("secret".Sha256())
                     },
-                    AllowedScopes = {"api1"}
+                    RequireConsent = false,
+                    RedirectUris = {"http://localhost:5001/signin-oidc"},
+                    PostLogoutRedirectUris = {"http://localhost:5001/signout-callback-oidc"},
+                    AllowedScopes =
+                    {
+                        IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.OpenId,
+                    }
                 }
             };
         }
