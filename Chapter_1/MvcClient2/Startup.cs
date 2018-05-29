@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.IdentityModel.Tokens.Jwt;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -23,19 +23,22 @@ namespace MvcClient2
         {
             services.AddMvc();
 
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
             services.AddAuthentication(options =>
                 {
-                    options.DefaultScheme = "Cookie";
+                    options.DefaultScheme = "Cookies";
                     options.DefaultChallengeScheme = "oidc";
                 })
                 .AddCookie("Cookies")
                 .AddOpenIdConnect("oidc", options =>
                 {
                     options.SignInScheme = "Cookies";
+
                     options.Authority = "http://localhost:5000";
                     options.RequireHttpsMetadata = false;
+
                     options.ClientId = "mvc";
-                    options.ClientSecret = "secret";
                     options.SaveTokens = true;
                 });
 
@@ -53,6 +56,8 @@ namespace MvcClient2
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+
+            app.UseAuthentication();
 
             app.UseStaticFiles();
 

@@ -16,10 +16,10 @@ namespace mvcCookieAuthSample
         public static void Main(string[] args)
         {
             BuildWebHost(args)
-                .MigrateDbContext<ApplicationDbContext>((context, services) => {
-                    new ApplicationDbContextSeed().SeedAsync(context, services)
-                    .Wait();
-                })
+                //.MigrateDbContext<ApplicationDbContext>((context, services) => {
+                //    new ApplicationDbContextSeed().SeedAsync(context, services)
+                //    .Wait();
+                //})
                 .Run();
         }
 
