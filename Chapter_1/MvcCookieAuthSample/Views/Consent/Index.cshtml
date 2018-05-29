@@ -21,27 +21,36 @@
 
 <div class="row">
     <div class="col-sm-8">
-        <form asp-action="Index">
+        <form asp-action="Index" method="post">
+            <input type="hidden" asp-for="@Model.ReturnUrl"/>
             @if (Model.IdentityScopes.Any())
             {
                 <ul class="list-group">
                     @foreach (var scop in Model.IdentityScopes)
                     {
-                        @Html.Partial("_ScopeListItem",scop);
+                        @Html.Partial("_ScopeListItem", scop)
+                        ;
                     }
                 </ul>
             }
-            
+
             @if (Model.ResourceScopes.Any())
             {
                 <ul class="list-group">
                     @foreach (var scop in Model.ResourceScopes)
                     {
-                        @Html.Partial("_ScopeListItem",scop);
+                        @Html.Partial("_ScopeListItem", scop)
+                        ;
                     }
                 </ul>
             }
-            
+            <div>
+                <label>
+                    <input type="checkbox" asp-for="RemeberConsent"/>
+                    <strong>记住我的选择</strong>
+                </label>
+            </div>
+
             <div class="consent-buttons">
                 <button name="button" value="yes" class="btn btn-primary" autofocus>Yes, Allow</button>
                 <button name="button" value="no" class="btn">No, Do Not Allow</button>

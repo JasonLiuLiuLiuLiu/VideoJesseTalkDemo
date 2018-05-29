@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using IdentityServer4;
 using IdentityServer4.Models;
@@ -39,6 +40,7 @@ namespace mvcCookieAuthSample
                     {
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.OpenId,
+                       
                     }
                 }
             };
@@ -62,6 +64,11 @@ namespace mvcCookieAuthSample
                     SubjectId = "1000",
                     Username = "lzy",
                     Password = "123456",
+                    Claims = new List<Claim>()
+                    {
+                        new Claim("e-mail","79385686@qq.com"),
+                        new Claim("website","www.cnblogs.com")
+                    }
                 }
             };
         }

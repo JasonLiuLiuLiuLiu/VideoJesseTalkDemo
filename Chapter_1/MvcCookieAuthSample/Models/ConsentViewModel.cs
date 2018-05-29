@@ -15,10 +15,12 @@ namespace mvcCookieAuthSample.Models
 
         public string ClientLogoUrl { get; set; }
 
-        public bool AllowRememberConsent { get; set; }
+        public bool RemeberConsent { get; set; }
 
         public IEnumerable<ScopeViewModel> IdentityScopes { get; set; }
 
         public IEnumerable<ScopeViewModel> ResourceScopes { get; set; }
+
+        public string ReturnUrl { get; set; }
     }
 }

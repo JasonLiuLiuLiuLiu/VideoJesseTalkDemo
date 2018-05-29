@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using mvcCookieAuthSample.Data;
 using Microsoft.EntityFrameworkCore;
 using mvcCookieAuthSample.Models;
+using mvcCookieAuthSample.Service;
 using Microsoft.AspNetCore.Identity;
 
 namespace mvcCookieAuthSample
@@ -27,6 +28,11 @@ namespace mvcCookieAuthSample
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //services.AddDbContext<ApplicationDbContext>(options =>
+            //{
+            //    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+            //});
+
             services.AddIdentityServer()
                 .AddDeveloperSigningCredential()
                 .AddInMemoryApiResources(Config.GetResources())
@@ -34,10 +40,7 @@ namespace mvcCookieAuthSample
                 .AddTestUsers(Config.GetUsers())
                 .AddInMemoryIdentityResources(Config.GetIdentityResources());
 
-            //services.AddDbContext<ApplicationDbContext>(options =>
-            //{
-            //    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
-            //});
+          
 
             //services.AddIdentity<ApplicationUser, ApplicationUserRole>()
             //    .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -56,6 +59,7 @@ namespace mvcCookieAuthSample
             //    options.Password.RequiredLength = 12;
             //});
 
+            services.AddScoped<ConsentService>();
 
            services.AddMvc();
         }
