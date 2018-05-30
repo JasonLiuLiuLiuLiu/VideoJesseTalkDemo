@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace MvcClient2
 {
@@ -31,6 +29,9 @@ namespace MvcClient2
                 .AddOpenIdConnect("oidc", options =>
                 {
                     options.SignInScheme = "Cookies";
+
+                    //返回用户授权码ID token和AccessToken
+                   // options.ResponseType = OpenIdConnectResponseType.CodeIdTokenToken;
 
                     options.Authority = "http://localhost:5000";
                     options.RequireHttpsMetadata = false;
@@ -65,5 +66,6 @@ namespace MvcClient2
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
         }
+
     }
 }

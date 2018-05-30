@@ -14,7 +14,8 @@ namespace mvcCookieAuthSample.Service
     public class ProfileService : IProfileService
     {
         private UserManager<ApplicationUser> _userManager;
-       // private UserManager<ApplicationUserRole> _userRoleManager;
+        // private UserManager<ApplicationUserRole> _userRoleManager;
+
 
 
         public ProfileService(UserManager<ApplicationUser> userManager)
