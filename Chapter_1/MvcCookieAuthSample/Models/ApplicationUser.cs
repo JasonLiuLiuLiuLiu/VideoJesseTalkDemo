@@ -11,6 +11,9 @@ namespace mvcCookieAuthSample.Models
 {
     public class ApplicationUser:IdentityUser<int>
     {
-         
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key]
+        public override int Id { get; set; }
+        public string Avatar { get; set; }
     }
 }

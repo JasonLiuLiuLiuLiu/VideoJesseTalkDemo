@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
+using IdentityServer4.Services;
 using IdentityServer4.Test;
 using mvcCookieAuthSample.ViewModels;
 using Microsoft.AspNetCore.Identity;
@@ -17,10 +18,11 @@ namespace mvcCookieAuthSample.Controllers
 {
     public class AccountController : Controller
     {
-        //private UserManager<ApplicationUser> _userManager;
-        //private SignInManager<ApplicationUser> _signInManager;
+        private UserManager<ApplicationUser> _userManager;
+        private SignInManager<ApplicationUser> _signInManager;
+        private IIdentityServerInteractionService _interaction;
 
-        private readonly TestUserStore _userses;
+        //private readonly TestUserStore _userses;
 
         private IActionResult RedirectToLoacl(string returnUrl)
         {
@@ -40,16 +42,17 @@ namespace mvcCookieAuthSample.Controllers
             }
         }
 
-        public AccountController(TestUserStore users)
-        {
-            _userses = users;
-        }
-
-        //public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        //public AccountController(TestUserStore users)
         //{
-        //    _userManager = userManager;
-        //    _signInManager = signInManager;
+        //    _userses = users;
         //}
+
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IIdentityServerInteractionService interaction)
+        {
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _interaction = interaction;
+        }
 
 
         public IActionResult Register(string returnUrl = null)
@@ -98,24 +101,31 @@ namespace mvcCookieAuthSample.Controllers
             if (ModelState.IsValid)
             {
                 ViewData["ReturnUrl"] = returnUrl;
-                var user = _userses.FindByUsername(loginViewModel.UserName);
+                var user = await _userManager.FindByEmailAsync(loginViewModel.Email);
                 if (user == null)
                 {
-                    ModelState.AddModelError(nameof(loginViewModel.UserName), "UserName not exists");
+                    ModelState.AddModelError(nameof(loginViewModel.Email), "Email not exists");
                 }
                 else
                 {
-                    if (_userses.ValidateCredentials(loginViewModel.UserName, loginViewModel.Password))
+                    if (await _userManager.CheckPasswordAsync(user, loginViewModel.Password))
                     {
-                        var props = new AuthenticationProperties
-                        {
-                            IsPersistent = true,
-                            ExpiresUtc = DateTimeOffset.Now.Add(TimeSpan.FromMinutes(30))
-                        };
+                        AuthenticationProperties props = null;
 
-                        await Microsoft.AspNetCore.Http.AuthenticationManagerExtensions.SignInAsync(HttpContext,
-                            user.SubjectId, user.Username, props);
-                        return RedirectToLoacl(returnUrl);
+                        if (loginViewModel.RememberMe)
+                            props = new AuthenticationProperties
+                            {
+                                IsPersistent = true,
+                                ExpiresUtc = DateTimeOffset.Now.Add(TimeSpan.FromMinutes(30))
+                            };
+
+                        await _signInManager.SignInAsync(user, props);
+                        if (_interaction.IsValidReturnUrl(returnUrl))
+                        {
+                            return Redirect(returnUrl);
+                        }
+
+                        return Register("~/");
                     }
                     ModelState.AddModelError(nameof(loginViewModel.Password), "Wrong Password");
                 }
